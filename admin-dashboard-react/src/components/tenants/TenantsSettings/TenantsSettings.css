@@ -1,0 +1,12 @@
+.section {
+    display: flex;
+    flex-direction: column;
+}
+
+.section .section-body {
+    display: flex;
+    flex-direction: column;
+}
+textarea {
+    flex: 1;
+}

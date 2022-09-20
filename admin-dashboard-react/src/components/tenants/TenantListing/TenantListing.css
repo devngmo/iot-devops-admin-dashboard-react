@@ -1,0 +1,23 @@
+.card {
+
+    display: flex!important;
+    flex-direction: column;
+}
+
+.card .card-header {
+    font-weight: bold;
+    font-size: 12pt;
+    text-align: left;
+}
+
+.card .card-body {
+    text-align: left;
+}
+
+.acc-info {
+
+}
+.acc-name {
+    font-weight: bold;
+    flex:1;
+}
