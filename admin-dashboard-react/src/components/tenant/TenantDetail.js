@@ -5,6 +5,8 @@ import DeviceAPI from '../../api/device';
 import './TenantDetail.css';
 import { Button } from 'react-bootstrap';
 import TriggerAPI from '../../api/trigger';
+import DeviceListing from '../widgets/DeviceListing/DeviceListing';
+import DeviceDetail from '../widgets/DeviceDetail/DeviceDetail';
 
 const deviceParamMapping = {};
 
@@ -38,12 +40,16 @@ function onParamChanged(device_id, ev) {
 function renderDeviceList(devices) {
     let rows = [];
     let portParams = {};
+
     devices.forEach(d => {
         let portRows = [];
         let triggerRows = [];
         d.ports.forEach(p => {
             portParams[p.id] = 0;
             portRows.push( <div key={p.id}><b>[{p.id}]</b> {p.name}</div> );
+        });
+        d.triggers.forEach(t => {
+            triggerRows.push( <div key={t.id}><b>[{t._id}]</b> {t.name}</div> );
         });
 
         if (deviceParamMapping[d._id] === undefined) {
@@ -77,6 +83,9 @@ export default function TenantDetail(props) {
     const [tenant, setTenant] = useState(null);
     const [devices, setDevices] = useState([]);
     const [loadingDevices, setLoadingDevices] = useState(true);
+    const [selectedDevice, setSelectedDevice] = useState(null);
+    
+
 
     useEffect(() => {
         new AccountAPI().getTenantByID(id)
@@ -86,7 +95,7 @@ export default function TenantDetail(props) {
         })
         ;
 
-        new DeviceAPI().getTenantDevices(id)
+        new DeviceAPI().getTenantDevices(id, '1')
         .then((resp) => {
             console.log(resp);
             return resp.json();
@@ -99,14 +108,13 @@ export default function TenantDetail(props) {
         ;
     }, []);
 
-    let body = <div className='section-body'>Loading...</div>;
-    if (tenant != null && !loadingDevices) {
-        body = <div className='section-body'>
-            <div>{tenant.name}</div>
-            {renderDeviceList(devices)}
+    
+    return <div className='screen tenant-detail hflex'>
+        <div className='panel device-list-container'>
+            <DeviceListing isLoading={loadingDevices} devices={devices} onChange={(d) => setSelectedDevice(d)}></DeviceListing>
         </div>
-    }
-    return <div className='section tenant-detail'>
-        {body}
+        <div className='panel device-detail-container f1'>
+            <DeviceDetail tenant_id={id} device={selectedDevice}></DeviceDetail>
+        </div>
     </div>
 }
